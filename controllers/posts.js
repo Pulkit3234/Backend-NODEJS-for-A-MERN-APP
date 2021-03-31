@@ -1,5 +1,6 @@
 const { findByIdAndRemove } = require('../models/postMessage');
 const PostMessage = require('../models/postMessage');
+const { post } = require('../routes/posts');
 
 exports.getPosts = async (req, res) => {
 	try {
@@ -86,8 +87,17 @@ exports.likePost = async (req, res, next) => {
 			res.json({ message: 'Post not found' });
 		}
 
-		console.log(result)
-		const updatedPost = await PostMessage.findByIdAndUpdate(id, { likeCount: result.likeCount + 1 }, { new: true });
+		console.log(result);
+
+		const index = result.likes.findIndex((id) => id === toString(req.userId));
+
+		if (index === -1) {
+			result.likes.push(req.userId);
+		} else {
+			result.likes = result.likes.filter((id) => id !== toString(req.userId));
+		}
+		
+		const updatedPost = await PostMessage.findByIdAndUpdate(id, result, { new: true });
 		res.status(200).json(updatedPost);
 	} catch (error) {
 		console.log(error);

@@ -4,14 +4,16 @@ const router = express.Router();
 
 const postsController = require('../controllers/posts');
 
+const auth = require('/middleware/auth');
+
 router.get('/', postsController.getPosts);
 
-router.post('/', postsController.createPost);
+router.post('/', auth, postsController.createPost);
 
-router.patch('/:id', postsController.updatePost);
+router.patch('/:id', auth,  postsController.updatePost);
 
-router.patch('/:id/likePost', postsController.likePost);
+router.patch('/:id/likePost', auth,  postsController.likePost);
 
-router.delete('/:id', postsController.deletePost);
+router.delete('/:id', auth, postsController.deletePost);
 
 module.exports = router;
