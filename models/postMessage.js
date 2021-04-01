@@ -4,13 +4,14 @@ const Schema = mongoose.Schema;
 const postSchema = new Schema({
 	title: String,
 	message: String,
-	creator: String,
+	name: String,
+	creator : String,
 	tags: [String], // this will be an array of type string same as tags : [ {type : String}]
 	selectedFile: String,
 	likeCount: [
 		{
-			type: String
-		}
+			type: String,
+		},
 	],
 	createdAt: {
 		type: Date,

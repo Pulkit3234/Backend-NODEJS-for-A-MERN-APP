@@ -4,9 +4,10 @@ const { post } = require('../routes/posts');
 
 exports.getPosts = async (req, res) => {
 	try {
-		const postMessages = await PostMessage.find();
+		const postMessages = await PostMessage.find()
+			
 
-		res.status(200).json(postMessages);
+		res.status(200).json({ postMessages, count });
 	} catch (error) {
 		res.status(404).json({ message: error.message });
 	}
@@ -14,7 +15,8 @@ exports.getPosts = async (req, res) => {
 
 exports.createPost = async (req, res) => {
 	const post = req.body;
-	const newPost = new PostMessage(post);
+
+	const newPost = new PostMessage({ ...post, creator: req.userId, createdAt: new Date().toISOString() });
 
 	try {
 		await newPost.save();
@@ -87,16 +89,16 @@ exports.likePost = async (req, res, next) => {
 			res.json({ message: 'Post not found' });
 		}
 
-		console.log(result);
+		console.log(req.userId);
 
-		const index = result.likes.findIndex((id) => id === toString(req.userId));
+		const index = result.likeCount.findIndex((id) => String(id) === String(req.userId));
 
 		if (index === -1) {
-			result.likes.push(req.userId);
+			result.likeCount.push(req.userId);
 		} else {
-			result.likes = result.likes.filter((id) => id !== toString(req.userId));
+			result.likeCount = result.likeCount.filter((id) => String(id) !== String(req.userId));
 		}
-		
+
 		const updatedPost = await PostMessage.findByIdAndUpdate(id, result, { new: true });
 		res.status(200).json(updatedPost);
 	} catch (error) {
@@ -104,3 +106,4 @@ exports.likePost = async (req, res, next) => {
 		res.status(502).json(error);
 	}
 };
+
