@@ -4,8 +4,10 @@ const cors = require('cors');
 const postsRoutes = require('./routes/posts');
 const dotenv = require('dotenv');
 const userRoutes = require('./routes/users');
+const helmet = require('helmet');
 
 const app = express();
+app.use(helmet());
 dotenv.config();
 
 app.use(express.json());
